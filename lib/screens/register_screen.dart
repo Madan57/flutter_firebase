@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/screens/login_screen.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
+  @override
+  _RegisterScreenState createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController emailController = TextEditingController();
+
   TextEditingController passwordController = TextEditingController();
+
   TextEditingController confirmPasswordController = TextEditingController();
+
+  bool _isObscure = true;
 
   @override
   Widget build(BuildContext context) {
@@ -22,25 +31,49 @@ class RegisterScreen extends StatelessWidget {
             TextField(
               controller: emailController,
               decoration: InputDecoration(
-                  labelText: "Email", border: OutlineInputBorder()),
+                  labelText: "Email",
+                  prefixIcon: Icon(Icons.email_outlined),
+                  border: OutlineInputBorder()),
             ),
             SizedBox(
               height: 30,
             ),
             TextField(
-              obscureText: true,
+              obscureText: _isObscure,
               controller: passwordController,
               decoration: InputDecoration(
-                  labelText: "Password", border: OutlineInputBorder()),
+                  labelText: "Password",
+                  prefixIcon: Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _isObscure = !_isObscure;
+                        });
+                      },
+                      icon: Icon(_isObscure
+                          ? Icons.visibility
+                          : Icons.visibility_off)),
+                  border: OutlineInputBorder()),
             ),
             SizedBox(
               height: 30,
             ),
             TextField(
-              obscureText: true,
+              obscureText: _isObscure,
               controller: confirmPasswordController,
               decoration: InputDecoration(
-                  labelText: "Confirm Password", border: OutlineInputBorder()),
+                  labelText: "Confirm Password",
+                  prefixIcon: Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _isObscure = !_isObscure;
+                        });
+                      },
+                      icon: Icon(_isObscure
+                          ? Icons.visibility
+                          : Icons.visibility_off)),
+                  border: OutlineInputBorder()),
             ),
             SizedBox(
               height: 30,

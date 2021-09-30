@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailController = TextEditingController();
+
   TextEditingController passwordController = TextEditingController();
+
+  bool _isObscure = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,16 +27,29 @@ class LoginScreen extends StatelessWidget {
             TextField(
               controller: emailController,
               decoration: InputDecoration(
-                  labelText: "Email", border: OutlineInputBorder()),
+                  labelText: "Email",
+                  prefixIcon: Icon(Icons.email_outlined),
+                  border: OutlineInputBorder()),
             ),
             SizedBox(
               height: 30,
             ),
             TextField(
-              obscureText: true,
+              obscureText: _isObscure,
               controller: passwordController,
               decoration: InputDecoration(
-                  labelText: "Password", border: OutlineInputBorder()),
+                  labelText: "Password",
+                  prefixIcon: Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _isObscure = !_isObscure;
+                        });
+                      },
+                      icon: Icon(_isObscure
+                          ? Icons.visibility
+                          : Icons.visibility_off)),
+                  border: OutlineInputBorder()),
             ),
             SizedBox(
               height: 30,
