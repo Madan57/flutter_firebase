@@ -15,6 +15,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool _isObscure = true;
 
+  bool loading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,37 +59,48 @@ class _LoginScreenState extends State<LoginScreen> {
             SizedBox(
               height: 30,
             ),
-            Container(
-              height: 50,
-              width: MediaQuery.of(context).size.width,
-              child: ElevatedButton(
-                onPressed: () async {
-                  if (emailController.text == "" ||
-                      passwordController.text == "") {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text("All fields are required!"),
-                      backgroundColor: Colors.red,
-                    ));
-                  } else {
-                    User? result = await AuthService().login(
-                        emailController.text, passwordController.text, context);
-                    print('check login data goes here $result');
-                    if (result != null) {
-                      print("Success");
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => HomeScreen()));
-                      print(result.email);
-                    }
-                  }
-                },
-                child: Text(
-                  'Submit',
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
+            loading
+                ? CircularProgressIndicator()
+                : Container(
+                    height: 50,
+                    width: MediaQuery.of(context).size.width,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        setState(() {
+                          loading = true;
+                        });
+                        if (emailController.text == "" ||
+                            passwordController.text == "") {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text("All fields are required!"),
+                            backgroundColor: Colors.red,
+                          ));
+                        } else {
+                          User? result = await AuthService().login(
+                              emailController.text,
+                              passwordController.text,
+                              context);
+                          print('check login data goes here $result');
+                          if (result != null) {
+                            print("Success");
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HomeScreen()));
+                            print(result.email);
+                          }
+                        }
+                        setState(() {
+                          loading = false;
+                        });
+                      },
+                      child: Text(
+                        'Submit',
+                        style: TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
           ],
         ),
       ),

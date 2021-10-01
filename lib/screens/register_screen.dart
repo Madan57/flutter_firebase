@@ -17,6 +17,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   bool _isObscure = true;
 
+  bool loading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +28,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         backgroundColor: Colors.orangeAccent,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(15.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -80,44 +82,55 @@ class _RegisterScreenState extends State<RegisterScreen> {
             SizedBox(
               height: 30,
             ),
-            Container(
-              height: 50,
-              width: MediaQuery.of(context).size.width,
-              child: ElevatedButton(
-                onPressed: () async {
-                  if (emailController.text == "" ||
-                      passwordController.text == "") {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text("All fields are required!"),
-                      backgroundColor: Colors.red,
-                    ));
-                  } else if (passwordController.text !=
-                      confirmPasswordController.text) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text("Password don't match !"),
-                      backgroundColor: Colors.red,
-                    ));
-                  } else {
-                    User? result = await AuthService().register(
-                        emailController.text, passwordController.text, context);
-                    print('check register data goes here $result');
-                    if (result != null) {
-                      print(result);
-                      print("Success");
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LoginScreen()));
-                      print(result.email);
-                    }
-                  }
-                },
-                child: Text(
-                  'Submit',
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
+            loading
+                ? CircularProgressIndicator()
+                : Container(
+                    height: 50,
+                    width: MediaQuery.of(context).size.width,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        setState(() {
+                          loading = true;
+                        });
+                        if (emailController.text == "" ||
+                            passwordController.text == "") {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text("All fields are required!"),
+                            backgroundColor: Colors.red,
+                          ));
+                        } else if (passwordController.text !=
+                            confirmPasswordController.text) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text("Password don't match !"),
+                            backgroundColor: Colors.red,
+                          ));
+                        } else {
+                          User? result = await AuthService().register(
+                              emailController.text,
+                              passwordController.text,
+                              context);
+                          print('check register data goes here $result');
+                          if (result != null) {
+                            print(result);
+                            print("Success");
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => LoginScreen()));
+                            print(result.email);
+                          }
+                        }
+                        setState(() {
+                          loading = false;
+                        });
+                      },
+                      child: Text(
+                        'Submit',
+                        style: TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
             SizedBox(
               height: 20,
             ),
