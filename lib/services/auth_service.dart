@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
@@ -40,5 +41,35 @@ class AuthService {
     } catch (e) {
       print(e);
     }
+  }
+
+  // Google Sign In
+  Future<User?> signInWithGoogle() async {
+    try {
+      // Trigger the authentication dialog
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser != null) {
+        // Obtain the auth details from the request
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
+
+        // Create a new Credentials
+        final credentials = GoogleAuthProvider.credential(
+            accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
+        // Once Signed in return the user data from firebase
+
+        UserCredential userCredential =
+            await firebaseAuth.signInWithCredential(credentials);
+        return userCredential.user;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // Logout
+  Future signOut() async {
+    await GoogleSignIn().signOut();
+    await firebaseAuth.signOut();
   }
 }

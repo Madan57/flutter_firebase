@@ -150,8 +150,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
             SizedBox(
               height: 20,
             ),
-            SignInButton(Buttons.Google,
-                text: "Continue with Google", onPressed: () {}),
+            loading
+                ? CircularProgressIndicator()
+                : SignInButton(Buttons.Google, text: "Continue with Google",
+                    onPressed: () async {
+                    setState(() {
+                      loading = true;
+                    });
+                    await AuthService().signInWithGoogle();
+
+                    setState(() {
+                      loading = false;
+                    });
+                  }),
           ],
         ),
       ),
