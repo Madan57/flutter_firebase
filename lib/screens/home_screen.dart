@@ -11,7 +11,15 @@ class HomeScreen extends StatelessWidget {
         backwardsCompatibility: false,
         title: Text('Home'),
         centerTitle: true,
-        backgroundColor: Colors.greenAccent,
+        backgroundColor: Colors.pink,
+        actions: [
+          TextButton.icon(
+            onPressed: () {},
+            icon: Icon(Icons.logout),
+            label: Text('Logout'),
+            style: TextButton.styleFrom(primary: Colors.white),
+          )
+        ],
       ),
       body: Center(
         child: Text('Welcome to the home screen'),

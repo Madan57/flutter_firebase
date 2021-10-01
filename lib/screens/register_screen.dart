@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase/screens/home_screen.dart';
 import 'package:flutter_firebase/screens/login_screen.dart';
 import 'package:flutter_firebase/services/auth_service.dart';
 
@@ -113,11 +114,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           if (result != null) {
                             print(result);
                             print("Success");
-                            Navigator.push(
+                            Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => LoginScreen()));
-                            print(result.email);
+                                    builder: (context) => HomeScreen()),
+                                (route) => false);
                           }
                         }
                         setState(() {

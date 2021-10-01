@@ -83,11 +83,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           print('check login data goes here $result');
                           if (result != null) {
                             print("Success");
-                            Navigator.pushReplacement(
+                            Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => HomeScreen()));
-                            print(result.email);
+                                    builder: (context) => HomeScreen()),
+                                (route) => false);
                           }
                         }
                         setState(() {
