@@ -119,7 +119,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => HomeScreen()),
+                                    builder: (context) => HomeScreen(result)),
                                 (route) => false);
                           }
                         }
