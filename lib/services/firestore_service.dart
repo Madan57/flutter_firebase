@@ -11,6 +11,27 @@ class FirestoreService {
         "date": DateTime.now(),
         "userId": userId
       });
-    } catch (e) {}
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future updateNote(String docId, String title, String description) async {
+    try {
+      await firestore
+          .collection('notes')
+          .doc(docId)
+          .update({'title': title, 'description': description});
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future deleteNote(String docId) async {
+    try {
+      await firestore.collection('notes').doc(docId).delete();
+    } catch (e) {
+      print(e);
+    }
   }
 }
