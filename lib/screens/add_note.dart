@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_firebase/services/firestore_service.dart';
 import 'package:image_picker/image_picker.dart';
 
+// ignore: must_be_immutable
 class AddNoteScreen extends StatefulWidget {
   User user;
   AddNoteScreen(this.user);

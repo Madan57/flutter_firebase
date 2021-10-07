@@ -7,6 +7,7 @@ import 'package:flutter_firebase/screens/add_note.dart';
 import 'package:flutter_firebase/screens/edit_note.dart';
 import 'package:flutter_firebase/services/auth_service.dart';
 
+// ignore: must_be_immutable
 class HomeScreen extends StatelessWidget {
   User user;
 

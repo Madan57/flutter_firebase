@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_firebase/screens/home_screen.dart';
 // import 'package:flutter_firebase/screens/home_screen.dart';
 import 'package:flutter_firebase/screens/register_screen.dart';
-import 'package:flutter_firebase/screens/upload_image.dart';
+// import 'package:flutter_firebase/screens/upload_image.dart';
 import 'package:flutter_firebase/services/auth_service.dart';
 
 void main() async {
