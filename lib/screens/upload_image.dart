@@ -57,6 +57,11 @@ class _UploadImageScreenState extends State<UploadImageScreen> {
     return files;
   }
 
+  Future<void> delete(String ref) async {
+    await firebaseStorage.ref(ref).delete();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,7 +91,50 @@ class _UploadImageScreenState extends State<UploadImageScreen> {
                           icon: Icon(Icons.library_add),
                           label: Text('Gallery'))
                     ],
-                  )
+                  ),
+            SizedBox(
+              height: 50,
+            ),
+            Expanded(
+                child: FutureBuilder(
+                    future: loadImages(),
+                    builder: (context, AsyncSnapshot snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      return ListView.builder(
+                          itemCount: snapshot.data.length ?? 0,
+                          itemBuilder: (context, index) {
+                            final Map image = snapshot.data[index];
+                            return Row(
+                              children: [
+                                Expanded(
+                                    child: Card(
+                                  child: Container(
+                                    height: 200,
+                                    child: Image.network(image['url']),
+                                  ),
+                                )),
+                                IconButton(
+                                    onPressed: () async {
+                                      await delete(image['path']);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                        content:
+                                            Text('Image Deleted Successfully'),
+                                        backgroundColor: Colors.redAccent,
+                                      ));
+                                    },
+                                    icon: Icon(
+                                      Icons.delete,
+                                      color: Colors.red,
+                                    ))
+                              ],
+                            );
+                          });
+                    })),
           ],
         ),
       ),
