@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -51,6 +52,14 @@ class HomeScreen extends StatelessWidget {
                         elevation: 5,
                         margin: EdgeInsets.all(10),
                         child: ListTile(
+                            leading: CachedNetworkImage(
+                                imageUrl: note.image,
+                                placeholder: (context, url) =>
+                                    Image.asset('images/placeholder.jpg'),
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
+                                width: 70,
+                                fit: BoxFit.cover),
                             contentPadding: EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 5),
                             title: Text(

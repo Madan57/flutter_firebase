@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/services/firestore_service.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddNoteScreen extends StatefulWidget {
   User user;
@@ -15,6 +19,23 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
   TextEditingController descriptionController = TextEditingController();
   bool loading = false;
 
+  File? imageFile;
+  String? fileName;
+
+  Future<void> uploadImage() async {
+    final picker = ImagePicker();
+    final XFile? pickedImage =
+        await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedImage == null) {
+      return null;
+    }
+    setState(() {
+      fileName = pickedImage.name;
+      imageFile = File(pickedImage.path);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,6 +46,26 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            InkWell(
+              onTap: () {
+                uploadImage();
+              },
+              child: Container(
+                height: 150,
+                child: imageFile == null
+                    ? Center(
+                        child: Icon(
+                        Icons.image,
+                        size: 100,
+                      ))
+                    : Center(
+                        child: Image.file(imageFile!),
+                      ),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
             Text(
               "Title",
               style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
@@ -63,17 +104,33 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                     child: ElevatedButton(
                       onPressed: () async {
                         if (titleController.text == "" ||
-                            descriptionController.text == "") {
+                            descriptionController.text == "" ||
+                            imageFile == null) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text('* All fields are required !')));
+                            content: Text(
+                              '* All fields are required !',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            backgroundColor: Colors.red,
+                          ));
                         } else {
                           setState(() {
                             loading = true;
                           });
 
+                          String imageUrl = await FirebaseStorage.instance
+                              .ref(fileName)
+                              .putFile(imageFile!)
+                              .then((result) {
+                            return result.ref.getDownloadURL();
+                          });
+
+                          print(imageUrl);
+
                           await FirestoreService().insertNote(
                               titleController.text,
                               descriptionController.text,
+                              imageUrl,
                               widget.user.uid);
 
                           setState(() {
