@@ -47,6 +47,36 @@ class _UploadImageScreenState extends State<UploadImageScreen> {
     }
   }
 
+  Future<void> uploadMultipleImages() async {
+    final picker = ImagePicker();
+    final List<XFile>? pickedImages = await picker.pickMultiImage();
+    if (pickedImages == null) {
+      return null;
+    }
+    setState(() {
+      loading = true;
+    });
+    await Future.forEach(pickedImages, (XFile image) async {
+      String fileName = image.name;
+      File imageFile = File(image.path);
+
+      try {
+        await firebaseStorage.ref(fileName).putFile(imageFile);
+      } on FirebaseException catch (e) {
+        print(e);
+      } catch (e) {
+        print(e);
+      }
+    });
+    setState(() {
+      loading = false;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('All images uploaded successfully'),
+      backgroundColor: Colors.greenAccent,
+    ));
+  }
+
   Future<List> loadImages() async {
     List<Map> files = [];
     final ListResult result = await firebaseStorage.ref().listAll();
@@ -105,8 +135,15 @@ class _UploadImageScreenState extends State<UploadImageScreen> {
                           label: Text('Gallery'))
                     ],
                   ),
+            SizedBox(height: 30),
+            ElevatedButton.icon(
+                onPressed: () async {
+                  await uploadMultipleImages();
+                },
+                icon: Icon(Icons.image),
+                label: Text("Multiple Images")),
             SizedBox(
-              height: 50,
+              height: 30,
             ),
             Expanded(
                 child: FutureBuilder(
