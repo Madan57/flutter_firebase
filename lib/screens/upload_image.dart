@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class UploadImageScreen extends StatefulWidget {
   const UploadImageScreen({Key? key}) : super(key: key);
@@ -26,12 +28,13 @@ class _UploadImageScreenState extends State<UploadImageScreen> {
     }
     String fileName = pickedImage.name;
     File imageFile = File(pickedImage.path);
+    File compressedFile = await compressImage(imageFile);
 
     try {
       setState(() {
         loading = true;
       });
-      await firebaseStorage.ref(fileName).putFile(imageFile);
+      await firebaseStorage.ref(fileName).putFile(compressedFile);
       setState(() {
         loading = false;
       });
@@ -60,6 +63,16 @@ class _UploadImageScreenState extends State<UploadImageScreen> {
   Future<void> delete(String ref) async {
     await firebaseStorage.ref(ref).delete();
     setState(() {});
+  }
+
+  Future<File> compressImage(File file) async {
+    File compressedFile =
+        await FlutterNativeImage.compressImage(file.path, quality: 50);
+    print("Original Size");
+    print(file.lengthSync());
+    print("Compressed Size");
+    print(compressedFile.lengthSync());
+    return compressedFile;
   }
 
   @override
@@ -113,9 +126,15 @@ class _UploadImageScreenState extends State<UploadImageScreen> {
                                 Expanded(
                                     child: Card(
                                   child: Container(
-                                    height: 200,
-                                    child: Image.network(image['url']),
-                                  ),
+                                      height: 200,
+                                      child: CachedNetworkImage(
+                                        imageUrl: image['url'],
+                                        placeholder: (context, url) =>
+                                            Image.asset(
+                                                'images/placeholder.jpg'),
+                                        errorWidget: (context, url, error) =>
+                                            Icon(Icons.error),
+                                      )),
                                 )),
                                 IconButton(
                                     onPressed: () async {
